@@ -1,4 +1,4 @@
-<img width="1168" height="952" alt="image" src="https://github.com/user-attachments/assets/c8ea6df5-2f80-4a3c-a055-02685b64b1ce" /># DSA Lab Report Generator
+## DSA Lab Report Generator
 
 > A zero-dependency, client-side web app for BScIT students at **St. Xavier's College, Kathmandu** to generate properly formatted Data Structure & Algorithms lab report cover pages and output pages — downloadable as a PDF in one click.
 
