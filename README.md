@@ -42,51 +42,56 @@ dsa-lab-generator/
 ---
 
 ## How It Works
+```
+┌─────────────┐     ┌──────────────┐     ┌──────────────┐     ┌─────────────┐
+│   data.js   │────▶│  preview.js  │────▶│  output.js   │────▶│ generate.js │
+│             │     │              │     │              │     │             │
+│ Students    │     │ Live cover   │     │ Add/remove   │     │ jsPDF →     │
+│ Lab titles  │     │ page preview │     │ output pages │     │ A4 PDF      │
+│ Base64 imgs │     │ Form binding │     │ Paste/upload │     │             │
+│ Static data │     │ Scale to fit │     │ Drag & resize│     │             │
+└─────────────┘     └──────────────┘     └──────────────┘     └─────────────┘
+```
 
-### 1. Data Layer — `js/data.js`
+### 📦 `data.js` — The Data Layer
+Loaded first. Exposes four globals every other script depends on:
+- `STUDENTS` — all 44 students as `{ roll, name, section }`
+- `DSA_LABS` — lab numbers mapped to titles (Labs 10–13 are blank for manual entry)
+- `STATIC_FIELDS` — teacher, department, college, semester (never change)
+- `BANNER_B64` / `LOGO_B64` — SXC banner and crest as base64, so the app works **fully offline** with no external image requests
+- `getToday()` — returns today as `D/M/YYYY`
 
-Everything static lives here and is loaded first. It exposes four globals that all other scripts depend on:
+---
 
-- **`STUDENTS`** — array of `{ roll, name, section }` for all 44 students
-- **`DSA_LABS`** — object keyed by lab number (1–13) mapping to the lab title string; labs 10–13 are blank so the student types their own title
-- **`STATIC_FIELDS`** — hardcoded cover page values that never change (teacher name, department, college, semester)
-- **`BANNER_B64` / `LOGO_B64`** — the SXC banner and crest embedded as base64 strings so the app works fully offline with no external image requests
-- **`getToday()`** — returns today's date formatted as `D/M/YYYY`
+### 👁️ `preview.js` — Live Cover Page Preview
+- Populates the student dropdown and sets the date on load
+- Listens to all three form controls (`studentSelect`, `labNoSelect`, `labTitleInput`) and calls `updateCoverPreview()` on every change
+- `updateCoverPreview()` reads the current form values, updates the relevant DOM elements inside `.a4-inner`, and enables or disables the download button based on whether all fields are filled
+- The A4 preview is a real **794×1123px** div (A4 at 96 DPI), scaled down with CSS `transform: scale()` — `scaleAllPages()` computes the scale factor by dividing the container's rendered width by 794, and re-runs on every window resize
 
-### 2. Live Preview — `js/preview.js`
+---
 
-Handles everything you see on the cover page preview in real time.
-
-- On load, it populates the student `<select>` from the `STUDENTS` array and sets the submission date
-- It listens to all three form controls (`studentSelect`, `labNoSelect`, `labTitleInput`) and calls `updateCoverPreview()` on every change
-- `updateCoverPreview()` reads the current form values, updates the relevant DOM elements inside the `.a4-inner` div, and enables or disables the download button based on whether all fields are filled
-- The A4 preview is a real `794×1123px` div (A4 at 96 DPI) that is scaled down to fit its container using CSS `transform: scale()`. `scaleAllPages()` computes the correct scale factor by dividing the container's rendered width by 794, and re-runs on every window resize
-
-### 3. Output Pages — `js/output.js`
-
-Manages the dynamic output page(s) that appear after the cover page.
-
-- `createOutputPage()` builds a complete output page DOM structure and appends it to `#outputPagesContainer`. Each page gets its own paste listener, upload button, and hidden file input
+### 🖼️ `output.js` — Output Page Builder
+- `createOutputPage()` builds a full output page DOM structure and appends it to `#outputPagesContainer`. Each page gets its own paste listener, upload button, and hidden file input
 - Images can be added via **Ctrl+V** (clipboard paste) or **file upload**. Once added, they are absolutely positioned inside the output box
-- `makeImageInteractive()` attaches mouse event listeners to each image wrapper for **drag** and **corner-handle resize**, accounting for the CSS scale transform so pixel deltas map correctly
-- `getOutputPages()` is the public API consumed by `generate.js` — it returns the current state of all pages as `{ id, images: [{ src, x, y, w, h }] }`, where coordinates are in the 794px preview space
+- `makeImageInteractive()` handles **drag** and **corner-handle resize**, correcting for the CSS scale transform so mouse deltas map accurately to the 794px coordinate space
+- `getOutputPages()` is the public API consumed by `generate.js` — returns all page state as `{ id, images: [{ src, x, y, w, h }] }`, where coordinates are in the 794px preview space
 
-### 4. PDF Generation — `js/generate.js`
+---
 
-Converts everything into a downloadable PDF using [jsPDF](https://github.com/parallax/jsPDF).
+### 📄 `generate.js` — PDF Generation
+Uses [jsPDF](https://github.com/parallax/jsPDF). All measurements are derived **directly from the original Word template XML** — converted from EMU and twips to millimetres:
 
-All measurements are derived **exactly** from the original Word template's XML (in EMU, DXA/twips), converted to millimetres:
-
-| Element | Measurement source |
+| Element | Value |
 |---|---|
-| Page margins | 1 inch = 25.4mm on all sides |
-| Logo size | 45.473mm × 51.206mm (from EMU values in XML) |
+| Page margins | 25.4mm (1 inch) all sides |
+| Logo size | 45.473 × 51.206mm |
 | Logo position | 37.324mm from page top (margin + posOffset) |
 | Table width | 179.299mm (10165 DXA), centered |
 | Column widths | 69.762mm / 71.438mm / 38.100mm |
 | Header row height | 10.936mm (620 DXA) |
 | Data row height | 29.633mm (240 + 4×360 twips) |
-| Paragraph spacing | 240/360/240 twips (before/line/after) |
+| Paragraph spacing | 240 / 360 / 240 twips (before / line / after) |
 
 **Cover page flow:**
 1. Banner drawn at top margin, full content width
@@ -96,10 +101,9 @@ All measurements are derived **exactly** from the original Word template's XML (
 5. Date line rendered as bold label + normal value, centered
 
 **Output pages:**
-Each output page in the PDF mirrors what you see in the preview. Image coordinates from `getOutputPages()` (in 794px space) are converted to mm using `1px = 25.4/96 mm`, then offset-corrected for the OUTPUT: label area before being embedded with `doc.addImage()`.
+Each output page mirrors the preview exactly. Image coordinates from `getOutputPages()` (in 794px space) are converted to mm using `1px = 25.4/96 mm`, then offset-corrected for the OUTPUT: label area before being embedded with `doc.addImage()`.
 
-The saved filename follows the pattern: `DSA_Lab{N}_{roll}_{name}.pdf`
-
+Saved as: `DSA_Lab{N}_{roll}_{name}.pdf`
 ---
 
 ## Getting Started
