@@ -1,4 +1,4 @@
-# DSA Lab Report Generator
+<img width="1168" height="952" alt="image" src="https://github.com/user-attachments/assets/c8ea6df5-2f80-4a3c-a055-02685b64b1ce" /># DSA Lab Report Generator
 
 > A zero-dependency, client-side web app for BScIT students at **St. Xavier's College, Kathmandu** to generate properly formatted Data Structure & Algorithms lab report cover pages and output pages — downloadable as a PDF in one click.
 
@@ -6,7 +6,7 @@
 
 ## Preview
 
-![DSA Lab Report Generator](assets/banner.png)
+![DSA Lab Report Generator](assets/preview.png)
 
 ---
 
@@ -160,4 +160,7 @@ Then simply open `index.html` in your browser. That's it.
 ## Credits
 
 Built for **024 Batch, 3rd Semester** — Department of Computer Science, St. Xavier's College, Maitighar, Kathmandu.
-Special thanks to Surakshya Dahal for providing with the student list and the cover page format. 
+
+## Special Thanks
+
+[**Surakshya Dahal**](https://github.com/surakshya0-0) — for providing the student list and the original cover page format that this generator is based on.
