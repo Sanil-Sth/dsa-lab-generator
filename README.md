@@ -44,7 +44,7 @@ dsa-lab-generator/
 ## How It Works
 ```
 ┌─────────────┐     ┌──────────────┐     ┌──────────────┐     ┌─────────────┐
-│   data.js   │────▶│  preview.js  │────▶│  output.js   │────▶│ generate.js │
+│   data.js   │ --> |  preview.js  │ --> │  output.js   │ --> │ generate.js │
 │             │     │              │     │              │     │             │
 │ Students    │     │ Live cover   │     │ Add/remove   │     │ jsPDF →     │
 │ Lab titles  │     │ page preview │     │ output pages │     │ A4 PDF      │
