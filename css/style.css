@@ -1,0 +1,705 @@
+/*
+ * css/style.css
+ * DSA Lab Report Generator — St. Xavier's College
+ * All UI styles: layout, form panel, A4 preview, output pages, buttons, animations.
+ * No dependencies on external CSS frameworks.
+ */
+
+/* ── CUSTOM PROPERTIES ───────────────────────────────────────────────────── */
+:root {
+  --navy:        #0f1f3d;
+  --navy-mid:    #1a3260;
+  --gold:        #c9962a;
+  --gold-light:  #f0c84a;
+  --cream:       #faf7f2;
+  --cream-dark:  #f0ebe0;
+  --white:       #ffffff;
+  --text:        #1a1a2e;
+  --text-muted:  #6b7280;
+  --border:      #e2d9c8;
+  --border-dark: #c9bfad;
+  --success:     #16a34a;
+  --shadow-sm:   0 2px 8px rgba(15,31,61,0.07);
+  --shadow-md:   0 4px 20px rgba(15,31,61,0.10);
+  --shadow-lg:   0 8px 32px rgba(15,31,61,0.13);
+  --radius-sm:   6px;
+  --radius-md:   10px;
+  --radius-lg:   14px;
+  --font-ui:     'DM Sans', system-ui, sans-serif;
+  --font-display:'Playfair Display', Georgia, serif;
+}
+
+/* ── RESET ───────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+body { font-family: var(--font-ui); background: var(--cream); color: var(--text); min-height: 100vh; }
+img { display: block; max-width: 100%; }
+button { cursor: pointer; font-family: var(--font-ui); }
+textarea, select, input { font-family: var(--font-ui); }
+
+/* ── SITE HEADER ─────────────────────────────────────────────────────────── */
+.site-header {
+  background: var(--navy);
+  padding: 2.25rem 1.5rem 1.75rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.site-header::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    45deg, transparent, transparent 50px,
+    rgba(201,150,42,0.035) 50px, rgba(201,150,42,0.035) 100px
+  );
+  pointer-events: none;
+}
+.site-header__inner { position: relative; z-index: 1; }
+.site-header__badge {
+  display: inline-block;
+  background: var(--gold);
+  color: var(--navy);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 0.28rem 0.85rem;
+  border-radius: 2px;
+  margin-bottom: 0.9rem;
+}
+.site-header__title {
+  font-family: var(--font-display);
+  font-size: clamp(1.7rem, 4vw, 2.6rem);
+  color: var(--white);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+.site-header__accent { color: var(--gold-light); }
+.site-header__sub {
+  color: rgba(255,255,255,0.5);
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+  font-weight: 300;
+}
+
+/* ── APP LAYOUT ──────────────────────────────────────────────────────────── */
+.app-layout {
+  display: grid;
+  grid-template-columns: 310px 1fr;
+  gap: 1.75rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+  align-items: start;
+}
+
+/* ── FORM PANEL ──────────────────────────────────────────────────────────── */
+.form-panel {
+  position: sticky;
+  top: 1.5rem;
+}
+.form-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.6rem 1.5rem;
+  box-shadow: var(--shadow-md);
+}
+.form-card__title {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  color: var(--navy);
+  padding-bottom: 0.7rem;
+  margin-bottom: 1.3rem;
+  border-bottom: 2.5px solid var(--gold);
+}
+
+/* ── FORM FIELDS ─────────────────────────────────────────────────────────── */
+.field { margin-bottom: 1.1rem; }
+.field__label {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.35rem;
+}
+.field__hint {
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 0.68rem;
+  color: var(--gold);
+}
+
+/* Select wrapper with custom arrow */
+.field__select-wrap {
+  position: relative;
+}
+.field__select-wrap::after {
+  content: '';
+  position: absolute;
+  right: 0.85rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 10px; height: 6px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236b7280' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat;
+  pointer-events: none;
+}
+.field__select {
+  width: 100%;
+  padding: 0.6rem 2rem 0.6rem 0.85rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  color: var(--text);
+  background: var(--cream);
+  appearance: none;
+  -webkit-appearance: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.field__select:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(201,150,42,0.15);
+}
+
+.field__textarea {
+  width: 100%;
+  padding: 0.6rem 0.85rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 0.88rem;
+  color: var(--text);
+  background: var(--cream);
+  resize: vertical;
+  min-height: 56px;
+  line-height: 1.5;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.field__textarea:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(201,150,42,0.15);
+}
+.field__textarea::placeholder { color: #aaa; font-style: italic; }
+
+/* ── FORM DIVIDER ────────────────────────────────────────────────────────── */
+.form-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 1.2rem 0;
+}
+
+/* ── OUTPUT CONTROLS ─────────────────────────────────────────────────────── */
+.output-controls__title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--navy);
+  margin-bottom: 0.3rem;
+}
+.output-controls__desc {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+  line-height: 1.4;
+}
+.output-pages-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.6rem;
+}
+.output-page-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0.6rem;
+  background: var(--cream-dark);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--navy);
+}
+.output-page-chip__remove {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  line-height: 1;
+  padding: 0;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+.output-page-chip__remove:hover { color: #dc2626; }
+
+/* ── BUTTONS ─────────────────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: 1.5px solid transparent;
+  transition: background 0.2s, border-color 0.2s, transform 0.1s, opacity 0.2s;
+}
+.btn:active:not(:disabled) { transform: scale(0.985); }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn__icon { font-style: normal; }
+
+.btn--primary {
+  background: var(--navy);
+  color: var(--white);
+  margin-bottom: 0.5rem;
+}
+.btn--primary:hover:not(:disabled) { background: var(--navy-mid); }
+
+.btn--secondary {
+  background: var(--white);
+  color: var(--navy);
+  border-color: var(--border);
+  margin-bottom: 0.5rem;
+}
+.btn--secondary:hover:not(:disabled) { background: var(--cream); }
+
+.btn--outline {
+  background: var(--white);
+  color: var(--navy);
+  border-color: var(--border);
+  font-size: 0.85rem;
+  padding: 0.55rem 0.85rem;
+}
+.btn--outline:hover:not(:disabled) { background: var(--cream); border-color: var(--gold); }
+
+.download-group { display: flex; flex-direction: column; }
+
+/* ── STATUS MESSAGE ──────────────────────────────────────────────────────── */
+.status-msg {
+  min-height: 1.4em;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--success);
+  text-align: center;
+  transition: opacity 0.3s;
+}
+.status-msg.hidden { opacity: 0; }
+
+/* ── PREVIEW PANEL ───────────────────────────────────────────────────────── */
+
+.preview-panel__header {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+.preview-panel__title {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  color: var(--navy);
+}
+.preview-panel__info {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* Pages row — horizontal scroll so pages never shrink */
+.pages-row {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 1.25rem;
+  align-items: flex-start;
+  overflow-x: auto;
+  padding-bottom: 0.75rem;
+  /* Smooth scroll & hide ugly scrollbar on webkit */
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-dark) transparent;
+}
+.pages-row::-webkit-scrollbar { height: 6px; }
+.pages-row::-webkit-scrollbar-track { background: transparent; }
+.pages-row::-webkit-scrollbar-thumb { background: var(--border-dark); border-radius: 3px; }
+
+/* ── PAGE WRAP ───────────────────────────────────────────────────────────── */
+.page-wrap {
+  flex: 0 0 320px;   /* fixed width — never shrinks regardless of page count */
+  width: 320px;
+}
+
+/* ── PAGE LABEL ──────────────────────────────────────────────────────────── */
+.page-label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.45rem;
+}
+.page-label__dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--gold);
+  flex-shrink: 0;
+}
+
+/* ── A4 SHELL + VIEWPORT ─────────────────────────────────────────────────── */
+.a4-shell {
+  background: #c8c4bc;
+  padding: 5px;
+  border-radius: 3px;
+  box-shadow: 0 3px 16px rgba(0,0,0,0.2), 0 1px 4px rgba(0,0,0,0.12);
+}
+
+/* The viewport maintains A4 aspect ratio and clips overflow */
+.a4-viewport {
+  position: relative;
+  width: 100%;
+  /* A4 aspect ratio: 297/210 = 1.41428... */
+  padding-top: 141.43%;
+  background: #fff;
+  overflow: hidden;
+}
+
+/* The inner div is 794x1123px (A4 at 96dpi), scaled via JS to fit viewport */
+.a4-inner {
+  position: absolute;
+  top: 0; left: 0;
+  width: 794px;
+  height: 1123px;
+  transform-origin: top left;
+  /* scale set by JS */
+  background: #fff;
+  font-family: 'Times New Roman', Times, serif;
+}
+
+/* ── COVER PAGE ELEMENTS (inside .a4-inner, 794×1123px = A4 at 96dpi) ───── */
+/*
+ * 1mm = 96/25.4 = 3.7795px.  1 twip = 96/1440 = 0.06667px.
+ *
+ * ── LOGO ──────────────────────────────────────────────────────────────────
+ * Word spec: 45.473mm × 51.206mm (1637030 × 1843405 EMU).
+ * posOffset = 429260 EMU = 11.924mm below TOP of page (anchor at top margin).
+ * Logo top  = margin(25.4mm) + 11.924mm = 37.324mm = 141.1px
+ * Logo X    = (794 - 171.9) / 2 = 311.1px  (centered on 794px page)
+ * Logo bottom = 37.324 + 51.206 = 88.530mm = 334.6px
+ *
+ * ── TEXT BLOCK ────────────────────────────────────────────────────────────
+ * Paragraph model:  advance = spaceBefore + lineHeight + spaceAfter
+ * DEPT/SUB/LAB:  240+360+240 = 840 twips = 56px per paragraph
+ * TITLE:         255+600+240 = 1095 twips = 73px per paragraph
+ *
+ * Text block positioned at logo bottom (335px), each element uses
+ * padding-top for spaceBefore and line-height for lineH.
+ *
+ * ── TABLE ─────────────────────────────────────────────────────────────────
+ * Total width  = 179.299mm = 677.8px  → X = (794-677.8)/2 = 58.1px
+ * Col1=263.7px | Col2=270.0px | Col3=144.1px
+ * Header height= 10.936mm = 41.3px  →  use 41px
+ * Data height  = (240+4×360) twips = 1680 twips = 112px
+ * Table top    = logo_bottom + 3×56px (DEPT/SUB/LAB) + 73px (TITLE) = 335 + 241 = 576px
+ * Date top     = 576 + 41 + 112 + 4px gap = 733px
+ */
+
+/* Banner: spans content width at top margin */
+.cv-banner {
+  position: absolute;
+  top: 96px;           /* 25.4mm = 96px (top margin) */
+  left: 85px;          /* left margin */
+  width: 650px;        /* content width: 159.2mm = 602px */
+  height: auto;
+  display: block;
+}
+
+/* Logo: 171.9×193.5px, top=141px, centered at X=311px */
+.cv-logo {
+  position: absolute;
+  top: 250px;          /* 37.324mm = 141.1px + 109.9px correction */
+  left: 311px;         /* (794 - 171.9) / 2 = 311.1px */
+  width: 172px;        /* 45.473mm = 171.9px */
+  height: 194px;       /* 51.206mm = 193.5px */
+  object-fit: contain;
+}
+
+/* Text block: starts at logo bottom (335px), flows downward.
+   Each child uses padding-top for Word's spacingBefore. */
+.cv-text-block {
+  position: absolute;
+  top: 500px;          /* logo bottom: 141 + 194 = 335px */
+  left: 96px;
+  right: 96px;
+  text-align: center;
+}
+
+/* DEPT — 18pt (24px), spBefore=16px, lineH=24px, spAfter=16px → advance=56px */
+.cv-dept {
+  font-size: 24px;
+  font-weight: 700;
+  padding-top: 16px;
+  line-height: 24px;
+  padding-bottom: 16px;
+}
+/* SUBJECT — 16pt (21.3px), same spacing → advance=56px */
+.cv-subject {
+  font-size: 21px;
+  font-weight: 700;
+  padding-top: 16px;
+  line-height: 24px;
+  padding-bottom: 16px;
+}
+/* LABNO — 16pt (21.3px), same spacing → advance=56px */
+.cv-labno {
+  font-size: 21px;
+  font-weight: 700;
+  padding-top: 16px;
+  line-height: 24px;
+  padding-bottom: 16px;
+}
+/* TITLE — 14pt (18.7px), spBefore=17px, lineH=40px, spAfter=16px → advance=73px */
+.cv-title {
+  font-size: 19px;
+  font-weight: 400;
+  padding-top: 17px;
+  line-height: 40px;
+  padding-bottom: 16px;
+  color: #222;
+}
+
+/* ── TABLE ────────────────────────────────────────────────────────────────
+ * top = 335 (logo bottom) + 56+56+56 (3 text paras) + 73 (title) = 576px
+ * X   = (794 - 678) / 2 = 58px
+ * W   = 678px (179.299mm)
+ * Col1=264px, Col2=270px, Col3=144px
+ * Header = 41px, Data = 112px
+ */
+.cv-table {
+  position: absolute;
+  top: 780px;
+  left: 58px;
+  width: 678px;
+  border-collapse: collapse;
+  font-size: 19px;     /* 14pt */
+  line-height: 24px;   /* 360 twips = 24px */
+}
+.cv-table__th {
+  border: 1px solid #000;
+  height: 41px;
+  padding: 0 8px;
+  font-size: 21px;     /* 16pt */
+  font-weight: 700;
+  text-align: left;
+  vertical-align: middle;
+  background: #fff;
+}
+.cv-table__th--sig { width: 144px; }
+
+.cv-table__td {
+  border: 1px solid #000;
+  height: 112px;       /* 1680 twips = 112px */
+  padding: 6px 8px;    /* ≈ 240twp top pad (16px → reduced for visual fit) */
+  vertical-align: top;
+}
+.cv-table__td--sig { width: 144px; }
+
+.cv-lbl { font-weight: 700; }
+.cv-ph  { color: #bbb; font-style: italic; }
+
+/* Date: centered, flush below table (1 twip ≈ 0px gap → use 4px) */
+/* top = 576 + 41 + 112 + 4 = 733px */
+.cv-date {
+  position: absolute;
+  top: 960px;
+  left: 96px;
+  right: 96px;
+  text-align: center;
+  font-size: 19px;     /* 14pt */
+  font-weight: 700;
+}
+
+/* ── OUTPUT PAGE ELEMENTS ────────────────────────────────────────────────── */
+
+/* The output viewport uses same a4-viewport / a4-inner system */
+.op-inner {
+  position: absolute;
+  top: 0; left: 0;
+  width: 794px;
+  height: 1123px;
+  transform-origin: top left;
+  background: #fff;
+  font-family: 'Times New Roman', Times, serif;
+}
+
+/* The output box fills the content area (margin = ~90px at 96dpi for 2.54cm) */
+.op-box {
+  position: absolute;
+  top: 55px;
+  left: 90px;
+  right: 90px;
+  bottom: 55px;
+  width: calc(794px - 180px);
+  height: calc(1123px - 110px);
+  border: 2px solid #000;
+  overflow: hidden;
+  cursor: crosshair;
+}
+
+.op-label {
+  position: absolute;
+  top: 8px;
+  left: 10px;
+  font-size: 26px;
+  font-weight: 700;
+  pointer-events: none;
+  z-index: 1;
+  color: #000;
+}
+
+/* Upload overlay — shown when no images yet */
+.op-upload-hint {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  pointer-events: none;
+  color: #ccc;
+  font-family: var(--font-ui);
+  user-select: none;
+}
+.op-upload-hint.hidden { display: none; }
+.op-upload-hint__icon  { font-size: 64px; margin-bottom: 6px; margin-top: -50px; }
+.op-upload-hint__text  { font-size:20px; line-height: 1.5; }
+
+/* Upload button (per output page) */
+.op-upload-btn {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: rgba(15,31,61,0.75);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 9px;
+  font-size: 20px;
+  font-family: var(--font-ui);
+  cursor: pointer;
+  z-index: 10;
+  transition: background 0.15s;
+}
+.op-upload-btn:hover { background: rgba(15,31,61,0.95); }
+
+/* Hidden file input */
+.op-file-input { display: none; }
+
+/* ── DRAGGABLE IMAGE ─────────────────────────────────────────────────────── */
+.op-img-wrap {
+  position: absolute;
+  cursor: move;
+  user-select: none;
+  /* top/left set by JS */
+}
+.op-img-wrap.selected .op-img-handles { display: block; }
+.op-img-wrap img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Resize handles — 4 corners */
+.op-img-handles { display: none; }
+.op-handle {
+  position: absolute;
+  width: 20px; height: 10px;
+  background: var(--navy);
+  border: 2px solid #fff;
+  border-radius: 2px;
+  z-index: 20;
+}
+.op-handle--tl { top: -5px;  left: -5px;  cursor: nw-resize; }
+.op-handle--tr { top: -5px;  right: -5px; cursor: ne-resize; }
+.op-handle--bl { bottom: -5px; left: -5px; cursor: sw-resize; }
+.op-handle--br { bottom: -5px; right: -5px; cursor: se-resize; }
+
+/* Image delete button — shown on selected image */
+.op-img-delete {
+  display: none;
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  width: 40px;
+  height: 40px;
+  background: #dc2626;
+  color: #fff;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  font-size: 13px;
+  line-height: 1;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 25;
+  padding: 0;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  transition: background 0.15s;
+}
+.op-img-delete:hover { background: #b91c1c; }
+.op-img-wrap.selected .op-img-delete { display: flex; }
+
+/* Output page remove button */
+.op-remove-btn {
+  position: absolute;
+  top: -10px; right: -10px;
+  width: 22px; height: 22px;
+  background: #dc2626;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  font-size: 13px;
+  line-height: 22px;
+  text-align: center;
+  cursor: pointer;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+  transition: background 0.15s;
+}
+.op-remove-btn:hover { background: #b91c1c; }
+
+/* ── RESPONSIVE ──────────────────────────────────────────────────────────── */
+@media (max-width: 860px) {
+  .app-layout {
+    grid-template-columns: 1fr;
+  }
+  .form-panel { position: static; }
+  .page-wrap {
+    flex: 0 0 280px;
+    width: 280px;
+  }
+}
+
+@media (max-width: 480px) {
+  .site-header { padding: 1.5rem 1rem 1.25rem; }
+  .app-layout  { padding: 1.25rem 1rem 3rem; }
+}
+
+/* ── ANIMATIONS ──────────────────────────────────────────────────────────── */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.page-wrap { animation: fadeIn 0.25s ease both; }

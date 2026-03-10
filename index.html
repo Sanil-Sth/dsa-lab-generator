@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<!--
+  index.html
+  DSA Lab Report Generator — St. Xavier's College
+  App shell: semantic HTML only. No inline styles or scripts.
+  Dependencies: css/style.css, js/data.js, js/preview.js, js/output.js, js/generate.js
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DSA Lab Report Generator — St. Xavier's College</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <!-- jsPDF CDN — loaded before generate.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+</head>
+<body>
+
+  <!-- ── SITE HEADER ─────────────────────────────────────────────────────── -->
+  <header class="site-header">
+    <div class="site-header__inner">
+      <span class="site-header__badge">St. Xavier's College · Kathmandu</span>
+      <h1 class="site-header__title">
+        DSA Lab Report <span class="site-header__accent">Generator</span>
+      </h1>
+      <p class="site-header__sub">Department of Computer Science &nbsp;·&nbsp; 024 Batch &nbsp;·&nbsp; 3rd Semester</p>
+    </div>
+  </header>
+
+  <!-- ── MAIN LAYOUT ─────────────────────────────────────────────────────── -->
+  <main class="app-layout">
+
+    <!-- ── LEFT: FORM PANEL ──────────────────────────────────────────────── -->
+    <aside class="form-panel">
+      <div class="form-card">
+        <h2 class="form-card__title">Your Details</h2>
+
+        <!-- Field 1: Student -->
+        <div class="field">
+          <label class="field__label" for="studentSelect">Student — Roll · Name</label>
+          <div class="field__select-wrap">
+            <select class="field__select" id="studentSelect">
+              <option value="">— Select your name —</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Field 2: Lab Number -->
+        <div class="field">
+          <label class="field__label" for="labNoSelect">Lab Assignment Number</label>
+          <div class="field__select-wrap">
+            <select class="field__select" id="labNoSelect">
+              <option value="">— Select number —</option>
+              <option value="1">Lab Assignment 1</option>
+              <option value="2">Lab Assignment 2</option>
+              <option value="3">Lab Assignment 3</option>
+              <option value="4">Lab Assignment 4</option>
+              <option value="5">Lab Assignment 5</option>
+              <option value="6">Lab Assignment 6</option>
+              <option value="7">Lab Assignment 7</option>
+              <option value="8">Lab Assignment 8</option>
+              <option value="9">Lab Assignment 9</option>
+              <option value="10">Lab Assignment 10</option>
+              <option value="11">Lab Assignment 11</option>
+              <option value="12">Lab Assignment 12</option>
+              <option value="13">Lab Assignment 13</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Field 3: Lab Title (auto-fill + editable) -->
+        <div class="field">
+          <label class="field__label" for="labTitleInput">
+            Lab Title
+            <span class="field__hint">(auto-filled, editable)</span>
+          </label>
+          <textarea class="field__textarea" id="labTitleInput" rows="2"
+            placeholder="Select a lab number to auto-fill, or type here…"></textarea>
+        </div>
+
+        <!-- Divider -->
+        <div class="form-divider"></div>
+
+        <!-- Output Page Controls -->
+        <div class="output-controls">
+          <h3 class="output-controls__title">Output Pages</h3>
+          <p class="output-controls__desc">
+            One output page is always included. Add more if needed.
+          </p>
+          <button class="btn btn--outline" id="addOutputPageBtn" type="button">
+            <span class="btn__icon">+</span> Add Output Page
+          </button>
+          <div class="output-pages-list" id="outputPagesList">
+            <!-- Output page thumbnails injected by output.js -->
+          </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="form-divider"></div>
+
+        <!-- Download Buttons -->
+        <div class="download-group">
+          <button class="btn btn--primary" id="dlPdfBtn" type="button" disabled>
+            <span class="btn__icon">⬇</span> Download as PDF
+          </button>
+        </div>
+        <div class="status-msg" id="statusMsg" aria-live="polite"></div>
+      </div>
+    </aside>
+
+    <!-- ── RIGHT: PREVIEW PANEL ───────────────────────────────────────────── -->
+    <section class="preview-panel">
+      <div class="preview-panel__header">
+        <h2 class="preview-panel__title">Live Preview</h2>
+        <span class="preview-panel__info">Updates in real time</span>
+      </div>
+
+      <div class="pages-row" id="pagesRow">
+
+        <!-- Cover Page Preview -->
+        <div class="page-wrap" id="coverPageWrap">
+          <div class="page-label">
+            <span class="page-label__dot"></span>
+            Page 1 — Cover Page
+          </div>
+          <div class="a4-shell">
+            <div class="a4-viewport" id="coverViewport">
+              <div class="a4-inner" id="coverInner">
+
+                <!-- Banner -->
+                <img class="cv-banner" id="cvBanner" src="" alt="St. Xavier's College Header">
+
+                <!-- Logo -->
+                <img class="cv-logo" id="cvLogo" src="" alt="St. Xavier's College Crest">
+
+                <!-- Text block -->
+                <div class="cv-text-block">
+                  <div class="cv-dept">DEPARTMENT OF COMPUTER SCIENCE</div>
+                  <div class="cv-subject">DATA STRUCTURE AND ALGORITHMS</div>
+                  <div class="cv-labno" id="cvLabNo">LAB ASSIGNMENT ___</div>
+                  <div class="cv-title" id="cvTitle">[ lab title ]</div>
+                </div>
+
+                <!-- Table -->
+                <table class="cv-table">
+                  <thead>
+                    <tr>
+                      <th class="cv-table__th">Submitted By:</th>
+                      <th class="cv-table__th">Submitted To:</th>
+                      <th class="cv-table__th cv-table__th--sig">Signature:</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="cv-table__td">
+                        <span class="cv-lbl">Name: </span><span id="cvName" class="cv-ph">___</span><br>
+                        <span class="cv-lbl">CRN: </span>024bscit<span id="cvRoll" class="cv-ph">___</span><br>
+                        <span class="cv-lbl">Semester: </span>3rd<br>
+                        <span class="cv-lbl">Section: </span><span id="cvSection" class="cv-ph">___</span>
+                      </td>
+                      <td class="cv-table__td">
+                        Er. Sudan Maharjan<br>
+                        Department of Computer Science<br>
+                        St. Xavier's College, Maitighar
+                      </td>
+                      <td class="cv-table__td cv-table__td--sig"></td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <!-- Date -->
+                <div class="cv-date">
+                  <span class="cv-lbl">Date of Submission: </span><span id="cvDate"></span>
+                </div>
+
+              </div><!-- /a4-inner -->
+            </div><!-- /a4-viewport -->
+          </div><!-- /a4-shell -->
+        </div><!-- /page-wrap cover -->
+
+        <!-- Output Pages Container (output.js injects here) -->
+        <div id="outputPagesContainer">
+          <!-- First output page injected on load by output.js -->
+        </div>
+
+      </div><!-- /pages-row -->
+    </section>
+
+  </main>
+
+  <!-- ── SCRIPTS — dependency order ─────────────────────────────────────── -->
+  <script src="js/data.js" defer></script>
+  <script src="js/preview.js" defer></script>
+  <script src="js/output.js" defer></script>
+  <script src="js/generate.js" defer></script>
+
+</body>
+</html>
