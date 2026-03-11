@@ -61,7 +61,7 @@ function updateCoverPreview() {
   /* ── Title ── */
   const titleEl  = document.getElementById('cvTitle');
   if (title) {
-    titleEl.textContent  = title.toUpperCase();
+    titleEl.textContent  = title;
     titleEl.style.color  = '#111';
   } else {
     titleEl.textContent  = '[ lab title ]';
@@ -107,13 +107,28 @@ function handleLabNoChange() {
   updateCoverPreview();
 }
 
+/* ── DATE CHANGE HANDLER ─────────────────────────────────────────────────── */
+function handleDateChange() {
+  const dateInput = document.getElementById('labDateInput');
+  if (!dateInput.value) return;
+
+  const [year, month, day] = dateInput.value.split('-');
+  const formattedDate = `${day}/${month}/${year}`;
+  document.getElementById('cvDate').textContent = formattedDate;
+}
+
 /* ── INIT ────────────────────────────────────────────────────────────────── */
 function initPreview() {
   /* Set images */
   setImages();
 
-  /* Set today's date */
-  document.getElementById('cvDate').textContent = getToday();
+  /* Set today's date and date input */
+  const dateInput = document.getElementById('labDateInput');
+  const today = getToday();
+  document.getElementById('cvDate').textContent = today;
+  if (dateInput) {
+    dateInput.value = today.split('/').reverse().join('-'); // Convert D/M/YYYY to YYYY-MM-DD
+  }
 
   /* Populate dropdowns */
   populateStudentDropdown();
@@ -122,6 +137,9 @@ function initPreview() {
   document.getElementById('studentSelect').addEventListener('change', updateCoverPreview);
   document.getElementById('labNoSelect').addEventListener('change', handleLabNoChange);
   document.getElementById('labTitleInput').addEventListener('input', updateCoverPreview);
+  if (dateInput) {
+    dateInput.addEventListener('change', handleDateChange);
+  }
 
   /* Initial preview state */
   updateCoverPreview();

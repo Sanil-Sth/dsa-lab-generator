@@ -39,14 +39,20 @@ function getFormValues() {
   const roll    = document.getElementById('studentSelect').value;
   const labNo   = document.getElementById('labNoSelect').value;
   const title   = document.getElementById('labTitleInput').value.trim();
+  const dateInput = document.getElementById('labDateInput');
+  let dateStr = getToday();
+  if (dateInput && dateInput.value) {
+    const [year, month, day] = dateInput.value.split('-');
+    dateStr = `${day}/${month}/${year}`;
+  }
   const student = STUDENTS.find(s => s.roll === roll) || null;
-  return { student, labNo, title };
+  return { student, labNo, title, dateStr };
 }
 
 /* ── PDF GENERATION ──────────────────────────────────────────────────────── */
 
 async function generatePDF() {
-  const { student, labNo, title } = getFormValues();
+  const { student, labNo, title, dateStr } = getFormValues();
   if (!student || !labNo || !title) {
     showStatus('Please fill in all fields before downloading.', true);
     return;
@@ -135,8 +141,7 @@ async function generatePDF() {
   /* TITLE — 14pt normal (sz=28), spaceBefore=255twp, line=600twp, spAfter=240twp */
   doc.setFont('times', 'normal');
   doc.setFontSize(14);
-  const titleUpper = title.toUpperCase();
-  const titleLines = doc.splitTextToSize(titleUpper, cW - 10);
+  const titleLines = doc.splitTextToSize(title, cW - 10);
   doc.text(titleLines, W / 2, pTop + TWP * 255 + cap(14), { align: 'center' });
   // BUG FIX: advance by all title lines (each extra line = 600twp lineHeight), not just one
   pTop += TWP * 1095 + (titleLines.length - 1) * TWP * 600;
@@ -202,7 +207,6 @@ async function generatePDF() {
    * Alignment: centered (jc=center). SpacingBefore = 1 twip ≈ 0mm (flush).
    */
   const dateY   = dataY + rowH + TWP * 1 + 20;   // 10mm is correction factor to align with template screenshot
-  const dateStr = getToday();
   const dlabel  = 'Date of Submission: ';
   doc.setFontSize(14);
   doc.setFont('times', 'bold');   const lw = bw(dlabel);
@@ -262,14 +266,12 @@ async function generatePDF() {
 /* ── DOCX (PRINT-READY HTML IN NEW TAB) ─────────────────────────────────── */
 
 function generateDOCX() {
-  const { student, labNo, title } = getFormValues();
+  const { student, labNo, title, dateStr } = getFormValues();
   if (!student || !labNo || !title) {
     showStatus('Please fill in all fields before downloading.', true);
     return;
   }
 
-  const titleUpper = title.toUpperCase();
-  const today = getToday();
   const pages = getOutputPages();
 
   let outputPagesHTML = '';
@@ -421,7 +423,7 @@ function generateDOCX() {
   <div class="dept">DEPARTMENT OF COMPUTER SCIENCE</div>
   <div class="sub">DATA STRUCTURE AND ALGORITHMS</div>
   <div class="labno">LAB ASSIGNMENT ${labNo}</div>
-  <div class="title">${titleUpper}</div>
+  <div class="title">${title}</div>
   <div class="table-wrap">
     <table>
       <colgroup><col><col><col></colgroup>
@@ -450,7 +452,7 @@ function generateDOCX() {
       </tbody>
     </table>
   </div>
-  <div class="date"><strong>Date of Submission: </strong>${today}</div>
+  <div class="date"><strong>Date of Submission: </strong>${dateStr}</div>
 </div>
 
 ${outputPagesHTML}
