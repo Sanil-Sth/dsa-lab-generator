@@ -186,6 +186,22 @@ textarea, select, input { font-family: var(--font-ui); }
 }
 .field__textarea::placeholder { color: #aaa; font-style: italic; }
 
+.field__input {
+  width: 100%;
+  padding: 0.6rem 0.85rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 0.88rem;
+  color: var(--text);
+  background: var(--cream);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.field__input:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(201,150,42,0.15);
+}
+
 /* ── FORM DIVIDER ────────────────────────────────────────────────────────── */
 .form-divider {
   height: 1px;
