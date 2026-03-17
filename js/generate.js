@@ -423,7 +423,7 @@ function generateDOCX() {
   <div class="dept">DEPARTMENT OF COMPUTER SCIENCE</div>
   <div class="sub">DATA STRUCTURE AND ALGORITHMS</div>
   <div class="labno">LAB ASSIGNMENT ${labNo}</div>
-  <div class="title">${titleUpper}</div>
+  const html = `<div class="title">${titleUpper}</div>`;
   <div class="table-wrap">
     <table>
       <colgroup><col><col><col></colgroup>
