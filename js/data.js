@@ -78,7 +78,7 @@ const DSA_LABS = {
   7:  'Implementation of Recursion',
   8:  'Implementation of Comparison Sorting Algorithms',
   9:  'Implementation Of Divide And Conquer Sorting Algorithms',
-  10: '',
+  10: 'Implementation of Insertion and Search Operation in BST',
   11: '',
   12: '',
   13: '',
